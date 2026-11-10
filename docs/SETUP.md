@@ -48,7 +48,7 @@ Then run the binary directly:
 
 The GitHub Actions workflow `.github/workflows/windows-release.yml` builds `sumo.exe` on a Windows runner. It runs `bun test` first, then compiles with `--target=bun-windows-x64-baseline` (this target works on older CPUs without AVX2).
 
-- Every push to any branch or tag, every pull request, and every manual run uploads `sumo.exe` as a workflow artifact named `sumo-windows-x64`.
+- Every push to any branch or tag and every manual run uploads `sumo.exe` as a workflow artifact named `sumo-windows-x64`.
 - A pushed tag that starts with `v` (for example `v1.0.0`) also creates a GitHub release with `sumo.exe` attached.
 
 To make a release:
