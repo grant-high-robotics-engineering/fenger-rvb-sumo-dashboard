@@ -3,6 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <title>FMS Overlay</title>
+    <!-- RvB typeface; without internet it falls back to Bahnschrift, which ships with Windows -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600&display=swap" rel="stylesheet" />
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -168,80 +172,120 @@
       .winner-banner.team2 { border-color: #e74c3c; }
       .winner-banner.team2 .winner-name { color: #e74c3c; }
 
+      /* ---------- RvB: score bar at the bottom, clock in the upper left ---------- */
       #rvb-root {
+        --plate: rgba(15, 15, 16, 0.9);
+        --hairline: rgba(237, 237, 237, 0.08);
+        --text: #ededed;
+        --text-2: #a1a1a6;
+        --text-3: #85858b;
+        --blue: #3498db;
+        --red: #e74c3c;
+        --ease: cubic-bezier(0.22, 1, 0.36, 1);
+
         position: fixed;
         inset: 0;
         display: none;
+        font-family: "Barlow Condensed", "Bahnschrift", "Arial Narrow", sans-serif;
+        font-weight: 500;
+        color: var(--text);
+        font-variant-numeric: tabular-nums;
       }
 
       #rvb-root.visible { display: block; }
 
-      .rvb-header {
+      .rvb-bar {
         position: fixed;
-        top: 26px;
         left: 50%;
+        bottom: 40px;
         transform: translateX(-50%);
-        background: rgba(0, 0, 0, 0.78);
-        border: 2px solid #f39c12;
-        border-radius: 10px;
-        padding: 10px 18px;
-        color: #fff;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        text-align: center;
-      }
-
-      .rvb-header .phase {
-        color: #f39c12;
-        font-size: 20px;
-      }
-
-      .rvb-header .time {
-        margin-top: 4px;
-        font-size: 34px;
+        display: flex;
+        background: var(--plate);
+        border: 1px solid var(--hairline);
+        border-radius: 12px;
+        overflow: hidden;
       }
 
       .rvb-alliance {
-        position: fixed;
-        bottom: 40px;
-        width: 420px;
-        padding: 18px;
-        border-radius: 14px;
-        background: rgba(0, 0, 0, 0.78);
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        height: 120px;
+        padding: 0 28px;
       }
+      .rvb-alliance.blue { --c: var(--blue); padding-left: 40px; border-right: 1px solid var(--hairline); }
+      .rvb-alliance.red { --c: var(--red); padding-right: 40px; flex-direction: row-reverse; }
 
-      .rvb-alliance.blue { left: 40px; border: 3px solid #3498db; }
-      .rvb-alliance.red { right: 40px; border: 3px solid #e74c3c; }
-
-      .rvb-title {
-        font-size: 20px;
-        letter-spacing: 3px;
-        text-transform: uppercase;
+      /* bumper stripe: the alliance color lives here and nowhere else */
+      .rvb-alliance::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 12px;
+        background: var(--c);
       }
+      .rvb-alliance.blue::before { left: 0; }
+      .rvb-alliance.red::before { right: 0; }
 
-      .rvb-alliance.blue .rvb-title { color: #3498db; }
-      .rvb-alliance.red .rvb-title { color: #e74c3c; }
+      /* a goal washes the plate in its alliance color for a moment */
+      .rvb-alliance::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: var(--c);
+        opacity: 0;
+        pointer-events: none;
+      }
+      .rvb-alliance.scored::after { animation: rvb-flash 700ms var(--ease); }
+      @keyframes rvb-flash { from { opacity: 0.28; } to { opacity: 0; } }
+
+      .rvb-meta { display: flex; flex-direction: column; gap: 4px; min-width: 200px; }
+      .rvb-alliance.red .rvb-meta { align-items: flex-end; }
+
+      .rvb-team { display: flex; align-items: baseline; gap: 8px; font-size: 28px; line-height: 1; white-space: nowrap; }
+      .rvb-alliance.red .rvb-team { flex-direction: row-reverse; }
+      .rvb-team .num { color: var(--text-2); font-weight: 400; }
+      .rvb-team .name:empty { display: none; }
+
+      .rvb-detail { margin-top: 4px; font-size: 20px; line-height: 1; color: var(--text-3); font-weight: 400; }
 
       .rvb-score {
-        margin-top: 6px;
-        font-size: 78px;
+        width: 2ch;
+        text-align: center;
+        font-size: 88px;
         line-height: 1;
-        color: #fff;
+        font-weight: 600;
       }
+      .rvb-score.bump { animation: rvb-rise 300ms var(--ease); }
+      @keyframes rvb-rise { from { transform: translateY(8px); opacity: 0.4; } to { transform: none; opacity: 1; } }
 
-      .rvb-sub {
-        margin-top: 6px;
-        font-size: 18px;
-        color: #ddd;
-        letter-spacing: 1px;
+      .rvb-clock {
+        position: fixed;
+        top: 40px;
+        left: 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 4px;
+        height: 120px;
+        min-width: 200px;
+        padding: 0 28px;
+        background: var(--plate);
+        border: 1px solid var(--hairline);
+        border-radius: 12px;
       }
+      .rvb-clock .context { font-size: 20px; line-height: 1; color: var(--text-2); font-weight: 400; white-space: nowrap; }
+      .rvb-clock .time { font-size: 52px; line-height: 1; font-weight: 600; }
+      /* last 10 seconds: invert instead of going red, which would read as the red alliance */
+      .rvb-clock.urgent { background: var(--text); }
+      .rvb-clock.urgent .time { color: #0f0f10; }
+      .rvb-clock.urgent .context { color: #3a3a3d; }
 
-      .rvb-teams {
-        margin-top: 10px;
-        font-size: 28px;
-        color: #fff;
-        letter-spacing: 2px;
-      }
+      /* scoring server not answering: grey out the numbers instead of showing stale ones as live */
+      #rvb-root.stale .rvb-score,
+      #rvb-root.stale .rvb-clock .time { color: #5c5c61; }
     </style>
   </head>
   <body>
@@ -279,23 +323,28 @@
     </div>
 
     <div id="rvb-root">
-      <div class="rvb-header">
-        <div class="phase" id="rvb-phase">Controllers Down</div>
-        <div class="time" id="rvb-time">0</div>
+      <div class="rvb-clock" id="rvb-clock">
+        <div class="context" id="rvb-context">Match 1</div>
+        <div class="time" id="rvb-time">Ready</div>
       </div>
 
-      <div class="rvb-alliance blue">
-        <div class="rvb-title">Blue Alliance</div>
-        <div class="rvb-score" id="rvb-blue-score">0</div>
-        <div class="rvb-sub">Auto <span id="rvb-blue-auto">0</span> | Pens <span id="rvb-blue-pens">0</span></div>
-        <div class="rvb-teams"><span id="rvb-blue1">#1</span> & <span id="rvb-blue2">#2</span></div>
-      </div>
-
-      <div class="rvb-alliance red">
-        <div class="rvb-title">Red Alliance</div>
-        <div class="rvb-score" id="rvb-red-score">0</div>
-        <div class="rvb-sub">Auto <span id="rvb-red-auto">0</span> | Pens <span id="rvb-red-pens">0</span></div>
-        <div class="rvb-teams"><span id="rvb-red1">#3</span> & <span id="rvb-red2">#4</span></div>
+      <div class="rvb-bar">
+        <div class="rvb-alliance blue">
+          <div class="rvb-meta">
+            <div class="rvb-team"><span class="num" id="rvb-blue1">1</span><span class="name" id="rvb-blue1-name"></span></div>
+            <div class="rvb-team"><span class="num" id="rvb-blue2">2</span><span class="name" id="rvb-blue2-name"></span></div>
+            <div class="rvb-detail" id="rvb-blue-detail">Auto 0 · 0 penalties</div>
+          </div>
+          <div class="rvb-score" id="rvb-blue-score">0</div>
+        </div>
+        <div class="rvb-alliance red">
+          <div class="rvb-meta">
+            <div class="rvb-team"><span class="num" id="rvb-red1">3</span><span class="name" id="rvb-red1-name"></span></div>
+            <div class="rvb-team"><span class="num" id="rvb-red2">4</span><span class="name" id="rvb-red2-name"></span></div>
+            <div class="rvb-detail" id="rvb-red-detail">Auto 0 · 0 penalties</div>
+          </div>
+          <div class="rvb-score" id="rvb-red-score">0</div>
+        </div>
       </div>
     </div>
 
@@ -387,28 +436,76 @@
         }
       }
 
+      // The scoring server's phase strings are cues for drivers; the stream shows quieter labels.
+      const RVB_PHASES = {
+        "Controllers Down": "ready",
+        "Auto": "Auto",
+        "Pick Up Your Controller!": "Teleop next",
+        "Drive Your Robot!": "Teleop",
+        "Controllers Down (Match Ended)!": "final",
+      };
+      const RVB_SLOTS = ["Blue1", "Blue2", "Red1", "Red2"];
+      const rvbLastScore = { blue: null, red: null };
+      let rvbMatch = 1;
+
       function applyRvbTeams(data) {
-        document.getElementById("rvb-blue1").textContent = "#" + (data.rvbBlue1 ?? 1);
-        document.getElementById("rvb-blue2").textContent = "#" + (data.rvbBlue2 ?? 2);
-        document.getElementById("rvb-red1").textContent = "#" + (data.rvbRed1 ?? 3);
-        document.getElementById("rvb-red2").textContent = "#" + (data.rvbRed2 ?? 4);
+        rvbMatch = data.match ?? rvbMatch;
+        for (const slot of RVB_SLOTS) {
+          const id = `rvb-${slot.toLowerCase()}`;
+          document.getElementById(id).textContent = data[`rvb${slot}`] ?? "";
+          document.getElementById(`${id}-name`).textContent = data[`rvb${slot}Name`] ?? "";
+        }
       }
 
+      function restartAnimation(el, cls) {
+        el.classList.remove(cls);
+        void el.offsetWidth;
+        el.classList.add(cls);
+      }
+
+      function setRvbScore(side, value) {
+        const el = document.getElementById(`rvb-${side}-score`);
+        if (rvbLastScore[side] !== null && value > rvbLastScore[side]) {
+          restartAnimation(el.closest(".rvb-alliance"), "scored");
+          restartAnimation(el, "bump");
+        }
+        rvbLastScore[side] = value;
+        el.textContent = String(value);
+      }
+
+      const penalties = (n) => `${n} ${n === 1 ? "penalty" : "penalties"}`;
+      const clockText = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+
       async function pollRvbScores() {
+        const root = document.getElementById("rvb-root");
         try {
           const res = await fetch("/api/rvb-scores");
-          if (!res.ok) return;
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
           const data = await res.json();
-          document.getElementById("rvb-blue-score").textContent = String(data.blueScore ?? 0);
-          document.getElementById("rvb-red-score").textContent = String(data.redScore ?? 0);
-          document.getElementById("rvb-blue-auto").textContent = String(data.blueAutoScore ?? 0);
-          document.getElementById("rvb-red-auto").textContent = String(data.redAutoScore ?? 0);
-          document.getElementById("rvb-blue-pens").textContent = String(data.bluePens ?? 0);
-          document.getElementById("rvb-red-pens").textContent = String(data.redPens ?? 0);
-          document.getElementById("rvb-phase").textContent = data.displayedPhase || "Controllers Down";
-          document.getElementById("rvb-time").textContent = String(data.timeRemaining ?? 0);
+          root.classList.remove("stale");
+
+          setRvbScore("blue", data.blueScore ?? 0);
+          setRvbScore("red", data.redScore ?? 0);
+          document.getElementById("rvb-blue-detail").textContent = `Auto ${data.blueAutoScore ?? 0} · ${penalties(data.bluePens ?? 0)}`;
+          document.getElementById("rvb-red-detail").textContent = `Auto ${data.redAutoScore ?? 0} · ${penalties(data.redPens ?? 0)}`;
+
+          const raw = data.displayedPhase || "Controllers Down";
+          const phase = RVB_PHASES[raw] ?? raw.replace(/!+$/, "");
+          const secs = data.timeRemaining ?? 0;
+          const clock = document.getElementById("rvb-clock");
+          if (phase === "ready" || phase === "final") {
+            document.getElementById("rvb-context").textContent = `Match ${rvbMatch}`;
+            document.getElementById("rvb-time").textContent = phase === "ready" ? "Ready" : "Final";
+            clock.classList.remove("urgent");
+          } else {
+            document.getElementById("rvb-context").textContent = `Match ${rvbMatch} · ${phase}`;
+            document.getElementById("rvb-time").textContent = clockText(secs);
+            clock.classList.toggle("urgent", phase === "Teleop" && secs <= 10);
+          }
         } catch {
-          // keep retrying
+          root.classList.add("stale");
+          document.getElementById("rvb-context").textContent = `Match ${rvbMatch} · Scores offline`;
+          document.getElementById("rvb-clock").classList.remove("urgent");
         }
       }
 

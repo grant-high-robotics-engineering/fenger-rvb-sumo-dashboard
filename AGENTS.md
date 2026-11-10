@@ -63,6 +63,7 @@ No build step. Bun bundles HTML files (including any `.tsx`/`.css` imports) auto
   rvbBlue2: number;          // Blue alliance team 2 (RvB mode)
   rvbRed1: number;           // Red alliance team 1 (RvB mode)
   rvbRed2: number;           // Red alliance team 2 (RvB mode)
+  rvbBlue1Name: string;      // RvB robot names for the overlay, "" when unknown (also rvbBlue2Name, rvbRed1Name, rvbRed2Name)
   rvbServerIp: string;       // scoring server host/IP; backend uses fixed port 8080; default 192.168.137.100, updated by discovery
 }
 ```
@@ -89,7 +90,7 @@ RvB mode does not use Apps Script or spreadsheet data.
 
 Team boxes are wrapped in `.team1-wrapper` / `.team2-wrapper` (fixed-positioned flex columns). The on-deck label sits above the team box inside the wrapper and is shown/hidden via the `.visible` class based on `state.ondeck1`/`ondeck2` being non-null. When `state.winner` is set, the match badge, timer, arrows, and both team wrappers are all hidden - only the winner banner is shown.
 
-When `state.gameMode === "rvb"`, Sumo elements are hidden and the overlay shows RvB alliance cards (2 blue teams + 2 red teams) and live scores from the scoring server.
+When `state.gameMode === "rvb"`, Sumo elements are hidden and the overlay shows a score bar at bottom center (Blue left, Red right, each with team numbers, robot names, auto points and penalty count) and a clock box in the upper left (match number, phase, m:ss). The scoring server's phase strings are mapped to short viewer labels in `RVB_PHASES`. The clock box inverts to off-white in the last 10s of teleop; if `/api/rvb-scores` fails, the numbers grey out and the clock reads "Scores offline". RvB styles live under `#rvb-root` and use Barlow Condensed from Google Fonts, falling back to Bahnschrift offline.
 
 ## Routing caveat
 

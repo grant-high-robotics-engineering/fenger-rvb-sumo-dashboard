@@ -199,6 +199,10 @@ const state: State = {
   rvbBlue2: 2,
   rvbRed1: 3,
   rvbRed2: 4,
+  rvbBlue1Name: "",
+  rvbBlue2Name: "",
+  rvbRed1Name: "",
+  rvbRed2Name: "",
   rvbServerIp: DEFAULT_RVB_SERVER_IP,
 };
 
