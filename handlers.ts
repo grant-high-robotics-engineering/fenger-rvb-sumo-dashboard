@@ -15,6 +15,11 @@ export interface State {
   rvbBlue2: number;
   rvbRed1: number;
   rvbRed2: number;
+  // Robot names shown on the RvB overlay; "" when unknown
+  rvbBlue1Name: string;
+  rvbBlue2Name: string;
+  rvbRed1Name: string;
+  rvbRed2Name: string;
   rvbServerIp: string;
 }
 
@@ -178,6 +183,10 @@ export function applyStateUpdate(
   if (typeof body.rvbBlue2 === "number") next.rvbBlue2 = body.rvbBlue2;
   if (typeof body.rvbRed1 === "number") next.rvbRed1 = body.rvbRed1;
   if (typeof body.rvbRed2 === "number") next.rvbRed2 = body.rvbRed2;
+  if (typeof body.rvbBlue1Name === "string") next.rvbBlue1Name = body.rvbBlue1Name;
+  if (typeof body.rvbBlue2Name === "string") next.rvbBlue2Name = body.rvbBlue2Name;
+  if (typeof body.rvbRed1Name === "string") next.rvbRed1Name = body.rvbRed1Name;
+  if (typeof body.rvbRed2Name === "string") next.rvbRed2Name = body.rvbRed2Name;
   if (typeof body.rvbServerIp === "string") {
     next.rvbServerIp = body.rvbServerIp.trim() ? normalizeRvbServerIp(body.rvbServerIp) : DEFAULT_RVB_SERVER_IP;
   }

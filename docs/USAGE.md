@@ -112,9 +112,9 @@ The overlay (`/overlay`) is designed to be used as an OBS Browser Source. It pol
 
 ### RvB Overlay Elements
 
-- **Header** - top-center, shows match phase and time remaining
-- **Blue Alliance Card** - bottom-left, shows total score, auto, penalties, and team numbers
-- **Red Alliance Card** - bottom-right, same info for Red
+- **Clock** - upper-left, shows the match number, phase (Ready, Auto, Teleop next, Teleop, Final) and time remaining. It turns off-white for the last 10 seconds of teleop, and reads "Scores offline" (with greyed numbers) when the scoring server can't be reached.
+- **Score bar** - bottom-center, Blue on the left and Red on the right. Each side shows the score, both team numbers with their robot names, auto points and penalty count. A side flashes its alliance color briefly when its score goes up.
+- Robot names come from **Load from Sheet**. If you type a team number by hand, that team's name is cleared from the overlay.
 
 ### Important Overlay Rules
 

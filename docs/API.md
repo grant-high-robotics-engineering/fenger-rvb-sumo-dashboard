@@ -22,6 +22,10 @@ The FMS server exposes a JSON HTTP API on the same port as the web UI (default `
   rvbBlue2: number;          // Blue alliance team 2
   rvbRed1: number;           // Red alliance team 1
   rvbRed2: number;           // Red alliance team 2
+  rvbBlue1Name: string;      // robot names shown on the RvB overlay ("" when unknown);
+  rvbBlue2Name: string;      //   the admin panel sends them with the team numbers after
+  rvbRed1Name: string;       //   Load from Sheet, and clears a name when its team number
+  rvbRed2Name: string;       //   is changed by hand
   rvbServerIp: string;       // scoring server host (default 192.168.137.100; updated by discovery)
 }
 ```

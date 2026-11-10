@@ -72,6 +72,10 @@ const state: State = {
   rvbBlue2: 2,
   rvbRed1: 3,
   rvbRed2: 4,
+  rvbBlue1Name: "",
+  rvbBlue2Name: "",
+  rvbRed1Name: "",
+  rvbRed2Name: "",
   rvbServerIp: "192.168.137.100",
 };
 ```
@@ -112,7 +116,8 @@ The overlay is a transparent HTML page designed to be composited over video. It:
 
 **RvB mode:**
 - Sumo root is hidden entirely
-- RvB root is shown with alliance cards and header
+- RvB root is shown with a bottom score bar and an upper-left clock box
+- If the scores proxy fails, the numbers grey out and the clock box reads "Scores offline"
 - Scores update live from the external server
 
 ## Google Apps Script Integration

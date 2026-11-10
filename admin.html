@@ -421,6 +421,9 @@
         document.getElementById("rvb-blue2").value = data.rvbBlue2 ?? 2;
         document.getElementById("rvb-red1").value = data.rvbRed1 ?? 3;
         document.getElementById("rvb-red2").value = data.rvbRed2 ?? 4;
+        for (const slot of RVB_SLOTS) {
+          rvbNames[slot] = { team: data[`rvb${slot}`], name: data[`rvb${slot}Name`] ?? "" };
+        }
         setServerIpFromServer(data.rvbServerIp);
         currentWinner = data.winner ?? null;
       }
@@ -550,16 +553,24 @@
         document.querySelectorAll(".action-grid button").forEach(btn => btn.disabled = disabled);
       }
 
+      // Robot names for the overlay, remembered with the team number they belong to.
+      // A name is sent only while its slot still holds that team, so a hand-typed
+      // team number never shows another team's robot name.
+      const RVB_SLOTS = ["Blue1", "Blue2", "Red1", "Red2"];
+      const rvbNames = {};
+
       async function saveRvbConfig(showFlash = true) {
         setButtonLoading("btn-rvb-save", "Saving...", true);
         const body = {
           gameMode: "rvb",
           match: parseInt(document.getElementById("rvb-match").value),
-          rvbBlue1: parseInt(document.getElementById("rvb-blue1").value),
-          rvbBlue2: parseInt(document.getElementById("rvb-blue2").value),
-          rvbRed1: parseInt(document.getElementById("rvb-red1").value),
-          rvbRed2: parseInt(document.getElementById("rvb-red2").value),
         };
+        for (const slot of RVB_SLOTS) {
+          const team = parseInt(document.getElementById(`rvb-${slot.toLowerCase()}`).value);
+          body[`rvb${slot}`] = team;
+          const known = rvbNames[slot];
+          body[`rvb${slot}Name`] = known && known.team === team ? known.name : "";
+        }
         // Only send the IP when the operator changed it, so a host found by discovery isn't overwritten
         const typedIp = document.getElementById("rvb-server-ip").value.trim();
         if (typedIp !== serverIpFromServer) body.rvbServerIp = typedIp;
@@ -680,6 +691,9 @@
           setRvbInfo("rvb-red1-info", data.rvbRed1Name, data.rvbRed1Members);
           setRvbInfo("rvb-red2-info", data.rvbRed2Name, data.rvbRed2Members);
 
+          for (const slot of RVB_SLOTS) {
+            rvbNames[slot] = { team: data[`rvb${slot}`], name: data[`rvb${slot}Name`] ?? "" };
+          }
           await saveRvbConfig(false);
           flash("Loaded from sheet!");
         } catch {

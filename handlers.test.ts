@@ -33,6 +33,10 @@ const baseState: State = {
   rvbBlue2: 112,
   rvbRed1: 211,
   rvbRed2: 212,
+  rvbBlue1Name: "",
+  rvbBlue2Name: "",
+  rvbRed1Name: "",
+  rvbRed2Name: "",
   rvbServerIp: "localhost",
 };
 
@@ -223,6 +227,18 @@ describe("applyStateUpdate", () => {
   test("ignores non-numeric team values", () => {
     const next = applyStateUpdate(baseState, { team1: "bad" as any }, "up-down");
     expect(next.team1).toBe(10); // unchanged
+  });
+
+  test("updates rvb robot names and ignores non-strings", () => {
+    const next = applyStateUpdate(
+      { ...baseState, rvbRed2Name: "Big D Randy" },
+      { rvbBlue1Name: "Dante", rvbRed1Name: "Cowboys Suck", rvbBlue2Name: 7 as any },
+      null,
+    );
+    expect(next.rvbBlue1Name).toBe("Dante");
+    expect(next.rvbRed1Name).toBe("Cowboys Suck");
+    expect(next.rvbBlue2Name).toBe(""); // unchanged
+    expect(next.rvbRed2Name).toBe("Big D Randy"); // unchanged
   });
 
   test("updates ondeck fields", () => {
