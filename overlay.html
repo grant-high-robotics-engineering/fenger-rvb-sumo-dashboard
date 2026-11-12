@@ -194,28 +194,24 @@
 
       #rvb-root.visible { display: block; }
 
-      .rvb-bar {
-        position: fixed;
-        left: 50%;
-        bottom: 40px;
-        transform: translateX(-50%);
-        display: flex;
-        background: var(--plate);
-        border: 1px solid var(--hairline);
-        border-radius: 12px;
-        overflow: hidden;
-      }
+      /* each alliance is its own plate pinned to a bottom corner */
+      .rvb-bar { display: contents; }
 
       .rvb-alliance {
-        position: relative;
+        position: fixed;
+        bottom: 40px;
         display: flex;
         align-items: center;
         gap: 24px;
         height: 120px;
         padding: 0 28px;
+        background: var(--plate);
+        border: 1px solid var(--hairline);
+        border-radius: 12px;
+        overflow: hidden;
       }
-      .rvb-alliance.blue { --c: var(--blue); padding-left: 40px; border-right: 1px solid var(--hairline); }
-      .rvb-alliance.red { --c: var(--red); padding-right: 40px; flex-direction: row-reverse; }
+      .rvb-alliance.blue { --c: var(--blue); left: 40px; padding-left: 40px; }
+      .rvb-alliance.red { --c: var(--red); right: 40px; padding-right: 40px; flex-direction: row-reverse; }
 
       /* bumper stripe: the alliance color lives here and nowhere else */
       .rvb-alliance::before {

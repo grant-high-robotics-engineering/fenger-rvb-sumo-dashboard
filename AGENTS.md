@@ -90,7 +90,7 @@ RvB mode does not use Apps Script or spreadsheet data.
 
 Team boxes are wrapped in `.team1-wrapper` / `.team2-wrapper` (fixed-positioned flex columns). The on-deck label sits above the team box inside the wrapper and is shown/hidden via the `.visible` class based on `state.ondeck1`/`ondeck2` being non-null. When `state.winner` is set, the match badge, timer, arrows, and both team wrappers are all hidden - only the winner banner is shown.
 
-When `state.gameMode === "rvb"`, Sumo elements are hidden and the overlay shows a score bar at bottom center (Blue left, Red right, each with team numbers, robot names, auto points and penalty count) and a clock box in the upper left (match number, phase, m:ss). The scoring server's phase strings are mapped to short viewer labels in `RVB_PHASES`. The clock box inverts to off-white in the last 10s of teleop; if `/api/rvb-scores` fails, the numbers grey out and the clock reads "Scores offline". RvB styles live under `#rvb-root` and use Barlow Condensed from Google Fonts, falling back to Bahnschrift offline.
+When `state.gameMode === "rvb"`, Sumo elements are hidden and the overlay shows a Blue plate in the bottom-left corner and a Red plate in the bottom-right corner (each with team numbers, robot names, auto points and penalty count) and a clock box in the upper left (match number, phase, m:ss). The scoring server's phase strings are mapped to short viewer labels in `RVB_PHASES`. The clock box inverts to off-white in the last 10s of teleop; if `/api/rvb-scores` fails, the numbers grey out and the clock reads "Scores offline". RvB styles live under `#rvb-root` and use Barlow Condensed from Google Fonts, falling back to Bahnschrift offline.
 
 ## Routing caveat
 

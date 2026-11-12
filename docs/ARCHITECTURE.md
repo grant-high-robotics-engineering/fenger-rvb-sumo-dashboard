@@ -116,7 +116,7 @@ The overlay is a transparent HTML page designed to be composited over video. It:
 
 **RvB mode:**
 - Sumo root is hidden entirely
-- RvB root is shown with a bottom score bar and an upper-left clock box
+- RvB root is shown with a Blue plate in the bottom-left corner, a Red plate in the bottom-right corner, and an upper-left clock box
 - If the scores proxy fails, the numbers grey out and the clock box reads "Scores offline"
 - Scores update live from the external server
 
