@@ -61,3 +61,43 @@ jobs:
           prerelease: ${{ steps.release.outputs.prerelease }}
           files: dist/sumo.exe
           generate_release_notes: true
+
+      # Replaces sumo.exe in the Google Drive folder. See drive-upload.gs for setup.
+      # Runs only on the default branch and on tags, so branch builds do not overwrite it.
+      - name: Upload exe to Google Drive
+        if: github.ref_type == 'tag' || github.ref_name == github.event.repository.default_branch
+        shell: bash
+        env:
+          DRIVE_UPLOAD_URL: ${{ secrets.DRIVE_UPLOAD_URL }}
+          DRIVE_UPLOAD_TOKEN: ${{ secrets.DRIVE_UPLOAD_TOKEN }}
+        run: |
+          set -euo pipefail
+          FILE=dist/sumo.exe
+          SIZE=$(wc -c < "$FILE" | tr -d ' ')
+
+          BODY=$(jq -n \
+            --arg token "$DRIVE_UPLOAD_TOKEN" \
+            --arg fileName "sumo.exe" \
+            --argjson size "$SIZE" \
+            --arg description "Build $GITHUB_RUN_NUMBER ($GITHUB_REF_NAME @ ${GITHUB_SHA::7})" \
+            '{token: $token, fileName: $fileName, size: $size, description: $description}')
+
+          # Ask Apps Script for a Drive upload session. -L follows the Apps Script redirect.
+          RESP=$(curl -sSL --fail -H 'Content-Type: application/json' --data "$BODY" "$DRIVE_UPLOAD_URL")
+          if [ "$(echo "$RESP" | jq -r '.ok // false')" != "true" ]; then
+            echo "Apps Script returned an error: $RESP"
+            exit 1
+          fi
+
+          UPLOAD_URL=$(echo "$RESP" | jq -r '.uploadUrl')
+          echo "::add-mask::$UPLOAD_URL"
+          echo "Replacing existing file: $(echo "$RESP" | jq -r '.replaced')"
+
+          # Send the exe straight to Google Drive.
+          curl -sS --fail -X PUT \
+            -H 'Content-Type: application/octet-stream' \
+            --upload-file "$FILE" \
+            -o drive-result.json \
+            "$UPLOAD_URL"
+
+          echo "Uploaded to Drive: $(jq -r '.name + " (id " + .id + ")"' drive-result.json)"
