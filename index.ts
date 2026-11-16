@@ -37,7 +37,7 @@ function log(tag: string, color: string, ...args: unknown[]) {
 const TOKEN = "fengermanagementsystem";
 
 const APPS_SCRIPT_BASE =
-  "https://script.google.com/macros/s/AKfycbwmPKewvI1HA34cuwx9tl2YprifSiiyPXuiBrv6Orxv-xcuPk0oNSTn3VS3rHg7GKJIQA/exec";
+  "https://script.google.com/macros/s/AKfycbyatOQ76gt5qhxWWQy05bv3MDyULXJLQeyWbtNKibno7fsQC1yDAXrjpyR7f_2HY4VO/exec";
 
 const APPS_SCRIPT_URL = `${APPS_SCRIPT_BASE}?token=${TOKEN}`;
 const RVB_SERVER_PORT = 8080;
